@@ -61,7 +61,8 @@
 | --- | --- | --- |
 | S0.1-S0.4 | completed | ModelHarbor 名称、许可、协议边界、账号顺序和 New API 导入范围已确认并推送 |
 | S1.1 | completed | CMake Presets、vcpkg baseline、Qt smoke test、构建封装脚本已提交；configure/build/ctest 通过 |
-| S1.2 | next | 双进程空壳、版本协商和最小 IPC |
+| S1.2 | completed | `modelharbor-desktop`、`modelharbor-gateway`、核心库、Qt Widgets 最小窗体和进程集成测试已通过 |
+| S1.3 | in_progress | 当前用户 IPC、版本协商、ping、状态订阅、网关启动/重启已完成；托盘关闭决策、断线重连和最终 IPC 帧格式待完成 |
 
 未列出的任务保持 pending。每个阶段完成后更新本表，并在提交信息中引用任务 ID。
 
@@ -298,4 +299,4 @@
 - Sub2API 首批运行时适配器按 OpenAI-compatible API Key、OpenAI/Codex、Claude、Gemini 的顺序推进。
 - v1 暂缓直接导入 New API 渠道配置，先完成独立渠道 CRUD 和兼容自动禁用策略。
 
-阶段 0 退出条件已满足，当前处于阶段 1；`S1.1 仓库与工具链` 已完成，下一项执行任务为 `S1.2 双进程空壳与 IPC`。
+阶段 0 退出条件已满足，当前处于阶段 1；`S1.1 仓库与工具链`、`S1.2 双进程空壳` 已完成，下一项执行任务为 `S1.3 IPC 与生命周期`。

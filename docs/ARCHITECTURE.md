@@ -53,7 +53,8 @@ flowchart LR
 
 - Windows 使用 `QLocalServer`/`QLocalSocket` 对应的命名管道。
 - 管道名包含当前用户 SID 的不可逆摘要，ACL 只允许当前用户访问。
-- 协议采用长度前缀 JSON 消息，包含版本、request_id、method、payload 和 error。
+- 发布协议采用长度前缀 JSON 消息，包含版本、request_id、method、payload 和 error。
+- S1.2 技术验证使用换行分帧 JSON 和每个桌面进程独立的 IPC 名称；进入 S1.3 发布门禁前必须切换为 SID 派生名称、长度前缀分帧和完整断线重连测试。
 - 大型日志列表使用分页；实时事件使用独立订阅通道并设置队列上限。
 - IPC 数据结构版本独立于数据库版本，破坏性变更必须升主版本。
 
