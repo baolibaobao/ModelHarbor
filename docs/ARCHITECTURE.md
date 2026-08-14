@@ -413,7 +413,7 @@ sequenceDiagram
 
 - 依赖通过 `vcpkg.json` 和 baseline 固定版本，禁止隐式下载最新版本。
 - 发布包动态链接 Qt，并附带 Qt/LGPL、Lucide/ISC、Boost、curl、OpenSSL、yyjson 等许可文本。
-- 本项目默认采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans)；商业场景须另行取得作者书面授权。第三方依赖和参考项目继续遵循各自许可证。
+- 本项目默认采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans)；商业场景须另行取得作者书面授权，联系方式为 `1305508372@qq.com`。第三方依赖和参考项目继续遵循各自许可证。
 - New API 为 AGPL 项目，Sub2API 为 LGPL 项目；本项目只参考公开行为、数据格式和渠道自动禁用工作流，采用独立设计与实现。
 - Cockpit Tools 调研基线为提交 `06bf8f781e117ced84e52d93521646a3db862715`，其 README 声明采用 CC BY-NC-SA 4.0。本项目只记录账号池和添加账号的交互行为，不复制源码、样式资源或文本。
 - 引入新依赖前记录用途、许可证、体积、维护状态和可替代方案。

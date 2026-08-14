@@ -376,7 +376,7 @@ UI 必须显示自动禁用原因、首次发生时间、下次探测时间、�
 - 状态不只依赖颜色，必须同时有图标或文字。
 - 敏感字段默认掩码，复制和临时查看是明确动作。
 
-## 8. 审阅时需要锁定的决定
+## 8. 已锁定的决定
 
-1. Sub2API 首批适配器是否按 OpenAI-compatible API Key、OpenAI/Codex、Claude、Gemini 的顺序推进。
-2. 是否需要从 New API 直接导入渠道配置；当前只规划通用 JSON/CSV 作为后续项。
+1. Sub2API 首批适配器按 OpenAI-compatible API Key、OpenAI/Codex、Claude、Gemini 的顺序推进，其他平台先完成导入和状态展示。
+2. v1 暂缓直接导入 New API 渠道配置；先完成独立渠道 CRUD、模型映射和自动禁用策略，通用 JSON/CSV 与 New API 配置导入作为后续扩展。

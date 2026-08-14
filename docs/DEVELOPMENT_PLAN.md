@@ -275,7 +275,7 @@
 
 未通过审阅的阶段只修复本阶段问题，不提前混入下一阶段功能。
 
-## 12. 阶段 0 当前结论
+## 12. 阶段 0 结论与阶段 1 入口
 
 已经确认：
 
@@ -284,9 +284,8 @@
 - 首版 API 为 Models + Chat Completions。
 - 首版不实现 Responses；文档和测试明确标注为后续兼容阶段。
 - 关闭窗口默认提供“最小化到托盘并保持服务”和“退出软件并停止网关”两个选择；选择退出后不保留托盘。
-- 发布许可采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans)，商业场景须单独取得书面授权。
+- 发布许可采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans)，商业场景须单独取得书面授权，联系方式为 `1305508372@qq.com`。
+- Sub2API 首批运行时适配器按 OpenAI-compatible API Key、OpenAI/Codex、Claude、Gemini 的顺序推进。
+- v1 暂缓直接导入 New API 渠道配置，先完成独立渠道 CRUD 和兼容自动禁用策略。
 
-仍需确认：
-
-- Sub2API 首批运行时适配器的真实使用优先级；当前建议按 OpenAI-compatible API Key、OpenAI/Codex、Claude、Gemini 的顺序推进。
-- 是否保留从 New API 导入渠道配置的后续需求。
+阶段 0 退出条件已满足，当前进入阶段 1；下一项执行任务为 `S1.1 仓库与工具链`。
