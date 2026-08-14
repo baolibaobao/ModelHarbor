@@ -15,7 +15,27 @@
 
 禁止一次性铺开所有页面后再补核心逻辑，也禁止只用真实站点手工验证而缺少确定性夹具。
 
-### 1.1 总任务表
+### 1.1 用户开始与验收门禁
+
+每个细分任务都必须经过用户明确授权和验收，状态含义固定如下：
+
+| 状态 | 含义 | 代理可执行动作 |
+| --- | --- | --- |
+| `pending` | 尚未开始 | 等待用户明确发送“进行 Sx.y”或等价指令 |
+| `in_progress` | 用户已授权，正在实现 | 只执行该细分任务，不跨到其他任务 |
+| `awaiting_acceptance` | 实现、测试和文档材料已准备好 | 停止继续开发，提交材料等待用户验收 |
+| `completed` | 用户明确回复验收通过 | 允许进入下一个已授权任务 |
+| `changes_requested` | 用户验收后提出修改 | 只修复用户指出的范围，完成后再次等待验收 |
+
+规则：
+
+1. 用户没有明确“进行 Sx.y”时，代理只允许整理文档、回答问题或准备验收材料，不得开始该任务的实现。
+2. 任务达到技术完成后，代理必须停在 `awaiting_acceptance`，不能自动开始下一个细分任务。
+3. 只有收到“验收通过 Sx.y”或明确等价表述后，才能把该任务标为 `completed`。
+4. 一个大阶段只有在其全部细分任务均为 `completed`，并且用户明确验收该阶段后，才算阶段完成。
+5. 用户提出修改时，任务进入 `changes_requested`；修改范围不得扩展到其他细分任务。
+
+### 1.2 总任务表
 
 | ID | 阶段 | 模块/小阶段 | 具体功能 | 阶段门禁 |
 | --- | --- | --- | --- | --- |
@@ -55,14 +75,14 @@
 | S8.1 | 8 | 发布候选 | Release 构建、windeployqt、许可证清单、安装器和升级迁移 | 干净 Windows 环境启动 |
 | S8.2 | 8 | 运维与回退 | 诊断包、崩溃恢复、托盘开机策略、卸载和数据保留 | 发布检查表全部通过 |
 
-### 1.2 当前进度
+### 1.3 当前进度
 
 | 范围 | 状态 | 证据 |
 | --- | --- | --- |
 | S0.1-S0.4 | completed | ModelHarbor 名称、许可、协议边界、账号顺序和 New API 导入范围已确认并推送 |
-| S1.1 | completed | CMake Presets、vcpkg baseline、Qt smoke test、构建封装脚本已提交；configure/build/ctest 通过 |
-| S1.2 | completed | `modelharbor-desktop`、`modelharbor-gateway`、核心库、Qt Widgets 最小窗体和进程集成测试已通过 |
-| S1.3 | in_progress | 当前用户 IPC、版本协商、ping、状态订阅、网关启动/重启已完成；托盘关闭决策、断线重连和最终 IPC 帧格式待完成 |
+| S1.1 | awaiting_acceptance | CMake Presets、vcpkg baseline、Qt smoke test、构建封装脚本已提交；configure/build/ctest 通过，等待用户验收 |
+| S1.2 | awaiting_acceptance | `modelharbor-desktop`、`modelharbor-gateway`、核心库、Qt Widgets 最小窗体和进程集成测试已通过，等待用户验收 |
+| S1.3 | pending | 当前用户 IPC、版本协商、ping、状态订阅、网关启动/重启、托盘关闭决策和断线重连 |
 
 未列出的任务保持 pending。每个阶段完成后更新本表，并在提交信息中引用任务 ID。
 
@@ -299,4 +319,4 @@
 - Sub2API 首批运行时适配器按 OpenAI-compatible API Key、OpenAI/Codex、Claude、Gemini 的顺序推进。
 - v1 暂缓直接导入 New API 渠道配置，先完成独立渠道 CRUD 和兼容自动禁用策略。
 
-阶段 0 退出条件已满足，当前处于阶段 1；`S1.1 仓库与工具链`、`S1.2 双进程空壳` 已完成，下一项执行任务为 `S1.3 IPC 与生命周期`。
+阶段 0 退出条件已满足，当前处于阶段 1；`S1.1` 和 `S1.2` 已实现并等待用户验收。收到明确的验收结论及下一项“进行 S1.3 IPC 与生命周期”指令前，不开始后续开发。
