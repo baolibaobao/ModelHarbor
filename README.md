@@ -103,7 +103,7 @@ http://127.0.0.1:8317/v1
 
 ## 许可证
 
-本项目默认采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans)（署名-非商业性使用-相同方式共享）。
+本项目默认采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans)（署名-非商业性使用-相同方式共享），完整说明见 [LICENSE.md](LICENSE.md)。
 
 - 个人学习、研究和非商业场景可以使用与修改，但必须保留署名并遵循相同方式共享。
 - 企业内部商业目的、对外商业服务、付费产品集成、二次分售等商业场景须先取得作者书面商业授权。

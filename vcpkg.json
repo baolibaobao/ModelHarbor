@@ -1,0 +1,12 @@
+{
+  "name": "modelharbor",
+  "version-string": "0.1.0-dev",
+  "description": "Local OpenAI-compatible API aggregation and diagnostics",
+  "builtin-baseline": "764ad0a297a101a279e700b0a74213cbf7e7efcc",
+  "dependencies": [
+    "boost-beast",
+    "curl",
+    "sqlite3",
+    "yyjson"
+  ]
+}

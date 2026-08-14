@@ -1,0 +1,23 @@
+# Build and package output
+/build/
+/out/
+/dist/
+/vcpkg_installed/
+
+# IDE and compiler state
+/.vs/
+/.idea/
+*.user
+*.suo
+*.VC.db
+compile_commands.json
+
+# Test and runtime data
+/test-data/
+/runtime-data/
+/crash-dumps/
+*.log
+
+# Local environment overrides
+CMakeUserPresets.json
+.env

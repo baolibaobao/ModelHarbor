@@ -55,6 +55,16 @@
 | S8.1 | 8 | 发布候选 | Release 构建、windeployqt、许可证清单、安装器和升级迁移 | 干净 Windows 环境启动 |
 | S8.2 | 8 | 运维与回退 | 诊断包、崩溃恢复、托盘开机策略、卸载和数据保留 | 发布检查表全部通过 |
 
+### 1.2 当前进度
+
+| 范围 | 状态 | 证据 |
+| --- | --- | --- |
+| S0.1-S0.4 | completed | ModelHarbor 名称、许可、协议边界、账号顺序和 New API 导入范围已确认并推送 |
+| S1.1 | completed | CMake Presets、vcpkg baseline、Qt smoke test、构建封装脚本已提交；configure/build/ctest 通过 |
+| S1.2 | next | 双进程空壳、版本协商和最小 IPC |
+
+未列出的任务保持 pending。每个阶段完成后更新本表，并在提交信息中引用任务 ID。
+
 ## 2. 阶段 0：设计锁定
 
 **本仓库当前处于此阶段。**
