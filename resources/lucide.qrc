@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="/lucide">
+    <file>lucide/activity.svg</file>
+    <file>lucide/server.svg</file>
+    <file>lucide/boxes.svg</file>
+    <file>lucide/heart-pulse.svg</file>
+    <file>lucide/flask-conical.svg</file>
+    <file>lucide/users.svg</file>
+    <file>lucide/chart-no-axes-combined.svg</file>
+    <file>lucide/settings.svg</file>
+    <file>lucide/sun-moon.svg</file>
+    <file>lucide/rotate-ccw.svg</file>
+  </qresource>
+</RCC>

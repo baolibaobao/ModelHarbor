@@ -2,8 +2,6 @@
 
 namespace modelharbor::core {
 
-QString productVersion() {
-    return QString::fromLatin1(kProductVersion);
-}
+QString productVersion() { return QString::fromLatin1(kProductVersion); }
 
 } // namespace modelharbor::core

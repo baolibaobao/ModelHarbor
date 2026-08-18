@@ -2,6 +2,8 @@
 param(
     [ValidateSet('configure', 'build', 'test', 'all')]
     [string]$Action = 'all',
+    [ValidateSet('windows-msvc-debug', 'windows-msvc-release')]
+    [string]$Preset = 'windows-msvc-debug',
     [string]$QtRoot = $env:QT_ROOT,
     [string]$VcpkgRoot = $env:VCPKG_ROOT
 )
@@ -48,13 +50,13 @@ function Invoke-Checked {
 }
 
 if ($Action -in @('configure', 'all')) {
-    Invoke-Checked 'cmake' @('--fresh', '--preset', 'windows-msvc-debug')
+    Invoke-Checked 'cmake' @('--fresh', '--preset', $Preset)
 }
 
 if ($Action -in @('build', 'all')) {
-    Invoke-Checked 'cmake' @('--build', '--preset', 'windows-msvc-debug')
+    Invoke-Checked 'cmake' @('--build', '--preset', $Preset)
 }
 
 if ($Action -in @('test', 'all')) {
-    Invoke-Checked 'ctest' @('--preset', 'windows-msvc-debug', '--output-on-failure')
+    Invoke-Checked 'ctest' @('--preset', $Preset, '--output-on-failure')
 }

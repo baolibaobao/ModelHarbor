@@ -9,7 +9,7 @@ namespace modelharbor::ipc {
 namespace {
 
 QByteArray encode(const QJsonObject& object) {
-    return QJsonDocument(object).toJson(QJsonDocument::Compact) + '\n';
+    return framePayload(QJsonDocument(object).toJson(QJsonDocument::Compact));
 }
 
 } // namespace
@@ -50,10 +50,56 @@ QByteArray encodeEvent(const QString& event, const QJsonObject& data) {
     });
 }
 
-DecodedMessage decodeMessage(const QByteArray& line) {
+QByteArray framePayload(const QByteArray& payload) {
+    if (payload.size() > kMaximumFramePayload) {
+        return {};
+    }
+
+    const quint32 length = static_cast<quint32>(payload.size());
+    QByteArray frame(4, Qt::Uninitialized);
+    frame[0] = static_cast<char>((length >> 24U) & 0xffU);
+    frame[1] = static_cast<char>((length >> 16U) & 0xffU);
+    frame[2] = static_cast<char>((length >> 8U) & 0xffU);
+    frame[3] = static_cast<char>(length & 0xffU);
+    frame.append(payload);
+    return frame;
+}
+
+FrameStatus takeFrame(QByteArray* buffer, QByteArray* payload, QString* error) {
+    if (buffer == nullptr || payload == nullptr) {
+        if (error != nullptr) {
+            *error = QStringLiteral("invalid_frame_arguments");
+        }
+        return FrameStatus::Invalid;
+    }
+    if (buffer->size() < 4) {
+        return FrameStatus::NeedMoreData;
+    }
+
+    const auto byte = [buffer](qsizetype index) {
+        return static_cast<quint32>(static_cast<unsigned char>(buffer->at(index)));
+    };
+    const quint32 length = (byte(0) << 24U) | (byte(1) << 16U) | (byte(2) << 8U) | byte(3);
+    if (length > static_cast<quint32>(kMaximumFramePayload)) {
+        buffer->clear();
+        if (error != nullptr) {
+            *error = QStringLiteral("frame_too_large");
+        }
+        return FrameStatus::Invalid;
+    }
+    if (buffer->size() < 4 + static_cast<qsizetype>(length)) {
+        return FrameStatus::NeedMoreData;
+    }
+
+    *payload = buffer->mid(4, static_cast<qsizetype>(length));
+    buffer->remove(0, 4 + static_cast<qsizetype>(length));
+    return FrameStatus::Ready;
+}
+
+DecodedMessage decodeMessage(const QByteArray& payload) {
     DecodedMessage decoded;
     QJsonParseError parseError;
-    const QJsonDocument document = QJsonDocument::fromJson(line.trimmed(), &parseError);
+    const QJsonDocument document = QJsonDocument::fromJson(payload, &parseError);
     if (parseError.error != QJsonParseError::NoError || !document.isObject()) {
         decoded.error = QStringLiteral("invalid_json");
         return decoded;
