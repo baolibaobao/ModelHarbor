@@ -80,19 +80,15 @@
 | 范围 | 状态 | 证据 |
 | --- | --- | --- |
 | S0.1-S0.4 | completed | ModelHarbor 名称、许可、协议边界、账号顺序和 New API 导入范围已确认并推送 |
-| S1.1 | awaiting_acceptance | CMake Presets、vcpkg baseline、构建封装脚本和统一测试入口已提交；阶段 1 末统一验收 |
-| S1.2 | awaiting_acceptance | `modelharbor-desktop`、`modelharbor-gateway`、核心库和版本集成测试已通过；阶段 1 末统一验收 |
-| S1.3 | awaiting_acceptance | 当前用户 IPC、4 字节长度帧、版本协商、ping、状态订阅、网关启动/重启、托盘关闭决策和断线重连测试 |
-| S1.4 | awaiting_acceptance | Beast 入站、libcurl multi 出站、SSE 增量透传、1 MiB、有界取消和断流夹具；阶段 1 末统一验收 |
-| S1.5 | awaiting_acceptance | Qt Widgets 导航壳、主题 Token、Lucide 图标、托盘菜单和 offscreen smoke test；阶段 1 末统一验收 |
-| S1.6 | awaiting_acceptance | 可编程 fake upstream、虚拟时钟、确定性随机源、临时数据目录、夹具说明和代码质量入口；阶段 1 末统一验收 |
-| 阶段 1 | awaiting_acceptance | S1.1-S1.6 已连续完成；Debug/Release 构建、CTest、格式检查、静态检查和 Release 打包骨架均有证据；等待用户统一验收 |
+| S1.1-S1.6 | completed | 工程工具链、双进程、IPC、HTTP/SSE 技术验证、桌面壳和测试基础设施已于阶段 1 统一验收 |
+| 阶段 1 | completed | Debug/Release 构建、7 项 CTest、格式检查、静态检查和 Release 打包骨架均已通过审阅 |
+| S2.1 | pending | SQLite WAL、schema migration、仓储、事务、崩溃恢复和备份快照；等待“进行 S2.1” |
 
 未列出的任务保持 pending。每个阶段完成后更新本表，并在提交信息中引用任务 ID。
 
 ## 2. 阶段 0：设计锁定
 
-**本阶段已完成并通过审阅，仓库当前处于阶段 1。**
+**本阶段已完成并通过审阅，仓库当前处于阶段 2。**
 
 交付物：
 
@@ -110,6 +106,8 @@
 退出条件：用户明确批准文档，并对上述决定给出结论。本阶段不创建功能源码。
 
 ## 3. 阶段 1：工程骨架与技术验证
+
+**本阶段已完成并通过审阅，仓库当前处于阶段 2。**
 
 目标：建立可重复构建的双进程空壳，并尽早验证最关键的网络路径。
 
@@ -134,6 +132,8 @@
 阶段审阅重点：构建体验、双进程生命周期、基础 UI 风格和网络技术验证结果。
 
 ## 4. 阶段 2：数据、密钥与 Sub2API 导入基础
+
+**当前阶段。S2.1-S2.6 继续执行细分任务开始与验收门禁。**
 
 目标：先把本地数据模型、迁移、DPAPI 和号池导入事务做扎实。
 
@@ -310,7 +310,7 @@
 
 未通过审阅的阶段只修复本阶段问题，不提前混入下一阶段功能。
 
-## 12. 阶段 0 结论与阶段 1 入口
+## 12. 已确认基线与阶段 2 入口
 
 已经确认：
 
@@ -323,4 +323,4 @@
 - Sub2API 首批运行时适配器按 OpenAI-compatible API Key、OpenAI/Codex、Claude、Gemini 的顺序推进。
 - v1 暂缓直接导入 New API 渠道配置，先完成独立渠道 CRUD 和兼容自动禁用策略。
 
-阶段 0 退出条件已满足，当前处于阶段 1；用户已授权连续推进 `S1.1-S1.6`，并约定在 `S1.6` 完成后统一验收。因此上述六项均停在 `awaiting_acceptance`，本阶段未收到验收通过前不得进入阶段 2。
+阶段 0 与阶段 1 退出条件均已满足。用户已于 2026-08-19 明确进入阶段 2；`S2.1-S2.6` 保持细分任务门禁，收到“进行 S2.1”或明确等价指令后再开始数据库实现。
