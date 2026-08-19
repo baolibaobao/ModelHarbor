@@ -5,7 +5,9 @@
 #include <QJsonObject>
 #include <QLocalSocket>
 #include <QProcess>
+#include <QTemporaryDir>
 #include <QThread>
+#include <QUuid>
 
 #include <iostream>
 
@@ -43,8 +45,13 @@ bool waitForFrame(QLocalSocket& socket, QByteArray& buffer, QByteArray* payload)
 
 bool sendAndReceive(QLocalSocket& socket, QByteArray& buffer, const QByteArray& request,
                     modelharbor::ipc::DecodedMessage* response) {
-    socket.write(request);
+    if (socket.write(request) != request.size()) {
+        return false;
+    }
     socket.flush();
+    if (socket.bytesToWrite() > 0 && !socket.waitForBytesWritten(500)) {
+        return false;
+    }
     QByteArray payload;
     if (!waitForFrame(socket, buffer, &payload)) {
         return false;
@@ -53,15 +60,36 @@ bool sendAndReceive(QLocalSocket& socket, QByteArray& buffer, const QByteArray& 
     return true;
 }
 
+class ProcessGuard final {
+  public:
+    explicit ProcessGuard(QProcess& process) : process_(process) {}
+    ~ProcessGuard() {
+        if (process_.state() != QProcess::NotRunning) {
+            process_.kill();
+            process_.waitForFinished(1000);
+        }
+    }
+
+  private:
+    QProcess& process_;
+};
+
 } // namespace
 
 int main(int argc, char** argv) {
     QCoreApplication application(argc, argv);
-    const QString socketName =
-        QStringLiteral("modelharbor-test-%1").arg(application.applicationPid());
+    const QString socketName = QStringLiteral("modelharbor-test-%1")
+                                   .arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
+    QTemporaryDir dataDirectory;
+    if (!dataDirectory.isValid()) {
+        std::cerr << "temporary gateway data directory failed\n";
+        return 1;
+    }
+    const QStringList gatewayArguments{QStringLiteral("--ipc-name"), socketName,
+                                       QStringLiteral("--data-dir"), dataDirectory.path()};
     QProcess gateway;
-    gateway.start(QStringLiteral(MODELHARBOR_GATEWAY_EXECUTABLE),
-                  {QStringLiteral("--ipc-name"), socketName});
+    ProcessGuard gatewayGuard(gateway);
+    gateway.start(QStringLiteral(MODELHARBOR_GATEWAY_EXECUTABLE), gatewayArguments);
     if (!gateway.waitForStarted(3000)) {
         std::cerr << "gateway failed to start\n";
         return 1;
@@ -77,12 +105,19 @@ int main(int argc, char** argv) {
 
     QByteArray buffer;
     modelharbor::ipc::DecodedMessage response;
-    if (!sendAndReceive(
-            socket, buffer,
-            modelharbor::ipc::encodeRequest(QStringLiteral("1"), QStringLiteral("ping")),
-            &response) ||
-        !response.valid || !response.object.value(QStringLiteral("ok")).toBool()) {
-        std::cerr << "ping failed\n";
+    const bool pingReceived = sendAndReceive(
+        socket, buffer,
+        modelharbor::ipc::encodeRequest(QStringLiteral("1"), QStringLiteral("ping")), &response);
+    const int pingSchemaVersion = response.object.value(QStringLiteral("result"))
+                                      .toObject()
+                                      .value(QStringLiteral("database_schema_version"))
+                                      .toInt();
+    if (!pingReceived || !response.valid || !response.object.value(QStringLiteral("ok")).toBool() ||
+        pingSchemaVersion != 2) {
+        std::cerr << "ping failed: received=" << pingReceived << " valid=" << response.valid
+                  << " schema=" << pingSchemaVersion << " process_state=" << gateway.state()
+                  << " process_error=" << gateway.errorString().toStdString()
+                  << " stderr=" << gateway.readAllStandardError().toStdString() << '\n';
         return 3;
     }
 
@@ -135,8 +170,7 @@ int main(int argc, char** argv) {
         return 7;
     }
 
-    gateway.start(QStringLiteral(MODELHARBOR_GATEWAY_EXECUTABLE),
-                  {QStringLiteral("--ipc-name"), socketName});
+    gateway.start(QStringLiteral(MODELHARBOR_GATEWAY_EXECUTABLE), gatewayArguments);
     if (!gateway.waitForStarted(3000)) {
         std::cerr << "same-name restart failed\n";
         return 8;
@@ -149,12 +183,16 @@ int main(int argc, char** argv) {
         return 9;
     }
     QByteArray restartedBuffer;
-    if (!sendAndReceive(
-            restartedSocket, restartedBuffer,
-            modelharbor::ipc::encodeRequest(QStringLiteral("5"), QStringLiteral("shutdown")),
-            &response) ||
-        !gateway.waitForFinished(2000)) {
-        std::cerr << "restarted gateway shutdown failed\n";
+    const bool restartedResponse = sendAndReceive(
+        restartedSocket, restartedBuffer,
+        modelharbor::ipc::encodeRequest(QStringLiteral("5"), QStringLiteral("shutdown")),
+        &response);
+    const bool restartedExited = gateway.waitForFinished(2000);
+    if (!restartedResponse || !restartedExited) {
+        std::cerr << "restarted gateway shutdown failed: response=" << restartedResponse
+                  << " exited=" << restartedExited
+                  << " process_error=" << gateway.errorString().toStdString()
+                  << " stderr=" << gateway.readAllStandardError().toStdString() << '\n';
         gateway.kill();
         gateway.waitForFinished(1000);
         return 10;

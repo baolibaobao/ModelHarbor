@@ -11,10 +11,12 @@
 
 namespace modelharbor::application {
 
-GatewayController::GatewayController(QString socketName, QString gatewayProgram, QObject* parent)
+GatewayController::GatewayController(QString socketName, QString gatewayProgram,
+                                     QString dataDirectory, QObject* parent)
     : QObject(parent), socketName_(socketName.isEmpty() ? modelharbor::ipc::currentUserSocketName()
                                                         : std::move(socketName)),
-      gatewayProgram_(std::move(gatewayProgram)), socket_(new QLocalSocket(this)) {
+      gatewayProgram_(std::move(gatewayProgram)), dataDirectory_(std::move(dataDirectory)),
+      socket_(new QLocalSocket(this)) {
     if (gatewayProgram_.isEmpty()) {
         gatewayProgram_ = QCoreApplication::applicationDirPath() +
 #ifdef Q_OS_WIN
@@ -200,7 +202,11 @@ void GatewayController::spawnGateway() {
     spawnAttempted_ = true;
     ownsGateway_ = true;
     setState(State::Starting, QStringLiteral("starting_gateway_process"));
-    gatewayProcess_.start(gatewayProgram_, {QStringLiteral("--ipc-name"), socketName_});
+    QStringList arguments{QStringLiteral("--ipc-name"), socketName_};
+    if (!dataDirectory_.isEmpty()) {
+        arguments.append({QStringLiteral("--data-dir"), dataDirectory_});
+    }
+    gatewayProcess_.start(gatewayProgram_, arguments);
 }
 
 void GatewayController::sendRequest(const QString& method) {

@@ -200,6 +200,14 @@ import_job_items
 - 可移植敏感备份使用用户输入口令和独立加密容器，作为后续能力。
 - 导出 Sub2API 结构时明确标记包含凭据，并先生成到临时文件后原子替换目标文件。
 
+### 5.4 S2.1 落地基线
+
+- SQL 源文件位于 `resources/migrations/`，构建时生成内嵌迁移，网关发布运行时不依赖外部 SQL 文件。
+- `schema_migrations` 的内容校验值与 `PRAGMA user_version` 同时校验；每个迁移的业务 SQL、迁移记录和版本号在同一事务中提交。
+- 网关启动时先打开 `modelharbor.db` 并迁移，成功后才监听管理 IPC；ping/status 同时报告数据库 schema 版本。
+- `SqliteDatabase`、`Statement` 和 `Transaction` 负责连接、预编译语句和事务的 RAII 生命周期；Desktop 不链接 persistence 目标。
+- 一致性快照使用 SQLite Online Backup API 写临时文件，再原子替换目标。当前 schema 与字段说明见 [数据库基线](DATABASE_SCHEMA.md)。
+
 ## 6. 密钥与敏感数据
 
 ### 6.1 存储

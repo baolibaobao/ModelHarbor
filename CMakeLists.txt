@@ -24,6 +24,15 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt6 6.11.1 REQUIRED COMPONENTS Core Network Widgets)
 find_package(Boost CONFIG REQUIRED COMPONENTS beast)
 find_package(CURL CONFIG REQUIRED)
+find_package(unofficial-sqlite3 CONFIG REQUIRED)
+
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/resources/migrations/0001_initial.sql" MIGRATION_0001_SQL)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/resources/migrations/0002_import_jobs.sql" MIGRATION_0002_SQL)
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/builtin_migration_sql.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/persistence/builtin_migration_sql.h"
+    @ONLY
+)
 
 add_library(modelharbor-core STATIC
     src/core/version.cpp
@@ -46,6 +55,31 @@ target_compile_features(modelharbor-core PUBLIC cxx_std_20)
 if(WIN32)
     target_link_libraries(modelharbor-core PRIVATE Advapi32)
 endif()
+
+add_library(modelharbor-persistence STATIC
+    src/persistence/app_settings_repository.cpp
+    src/persistence/app_settings_repository.h
+    src/persistence/migration.cpp
+    src/persistence/migration.h
+    src/persistence/site_repository.cpp
+    src/persistence/site_repository.h
+    src/persistence/sqlite_database.cpp
+    src/persistence/sqlite_database.h
+)
+
+target_include_directories(modelharbor-persistence
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/generated
+)
+
+target_link_libraries(modelharbor-persistence
+    PUBLIC
+        unofficial::sqlite3::sqlite3
+)
+
+target_compile_features(modelharbor-persistence PUBLIC cxx_std_20)
 
 add_library(modelharbor-application STATIC
     src/application/gateway_controller.cpp
@@ -73,6 +107,7 @@ add_executable(modelharbor-gateway
 target_link_libraries(modelharbor-gateway
     PRIVATE
         modelharbor-core
+        modelharbor-persistence
         Qt6::Core
         Qt6::Network
 )
@@ -250,6 +285,46 @@ set_target_properties(
 add_test(
     NAME modelharbor.test.support
     COMMAND modelharbor-test-support-test
+)
+
+add_executable(modelharbor-persistence-test
+    tests/persistence_test.cpp
+)
+
+add_executable(modelharbor-persistence-crash-writer
+    tests/persistence_crash_writer.cpp
+)
+
+target_link_libraries(modelharbor-persistence-crash-writer
+    PRIVATE
+        modelharbor-persistence
+)
+
+set_target_properties(
+    modelharbor-persistence-crash-writer
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+target_link_libraries(modelharbor-persistence-test
+    PRIVATE
+        modelharbor-persistence
+        modelharbor-test-support
+)
+
+target_compile_definitions(modelharbor-persistence-test
+    PRIVATE
+        MODELHARBOR_MIGRATION_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/resources/migrations"
+        MODELHARBOR_CRASH_WRITER="$<TARGET_FILE:modelharbor-persistence-crash-writer>"
+)
+
+set_target_properties(
+    modelharbor-persistence-test
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+add_test(
+    NAME modelharbor.persistence
+    COMMAND modelharbor-persistence-test
 )
 
 add_executable(modelharbor-desktop-smoke

@@ -1,0 +1,9 @@
+#pragma once
+
+namespace modelharbor::persistence::generated {
+
+inline constexpr char kMigration0001Sql[] = R"MH_MIGRATION(@MIGRATION_0001_SQL@)MH_MIGRATION";
+inline constexpr char kMigration0002Sql[] = R"MH_MIGRATION(@MIGRATION_0002_SQL@)MH_MIGRATION";
+
+} // namespace modelharbor::persistence::generated
+

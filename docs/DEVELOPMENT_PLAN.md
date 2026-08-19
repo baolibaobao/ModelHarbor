@@ -82,7 +82,7 @@
 | S0.1-S0.4 | completed | ModelHarbor 名称、许可、协议边界、账号顺序和 New API 导入范围已确认并推送 |
 | S1.1-S1.6 | completed | 工程工具链、双进程、IPC、HTTP/SSE 技术验证、桌面壳和测试基础设施已于阶段 1 统一验收 |
 | 阶段 1 | completed | Debug/Release 构建、7 项 CTest、格式检查、静态检查和 Release 打包骨架均已通过审阅 |
-| S2.1 | pending | SQLite WAL、schema migration、仓储、事务、崩溃恢复和备份快照；等待“进行 S2.1” |
+| S2.1 | awaiting_acceptance | SQLite WAL、两版 schema migration、Repository/RAII 事务、真实网关启动迁移、崩溃恢复和 Online Backup 快照已通过 Debug/Release 验证；等待用户验收 |
 
 未列出的任务保持 pending。每个阶段完成后更新本表，并在提交信息中引用任务 ID。
 
@@ -323,4 +323,4 @@
 - Sub2API 首批运行时适配器按 OpenAI-compatible API Key、OpenAI/Codex、Claude、Gemini 的顺序推进。
 - v1 暂缓直接导入 New API 渠道配置，先完成独立渠道 CRUD 和兼容自动禁用策略。
 
-阶段 0 与阶段 1 退出条件均已满足。用户已于 2026-08-19 明确进入阶段 2；`S2.1-S2.6` 保持细分任务门禁，收到“进行 S2.1”或明确等价指令后再开始数据库实现。
+阶段 0 与阶段 1 退出条件均已满足。用户已于 2026-08-19 明确进入阶段 2，并已授权依次推进 `S2.1-S2.6`；每个细分任务仍保持独立验收门禁。S2.1 已停在 `awaiting_acceptance`，验收通过后才开始 S2.2。

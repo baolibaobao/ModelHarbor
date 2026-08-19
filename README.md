@@ -95,9 +95,11 @@ http://127.0.0.1:8317/v1
 3. [开发流程](docs/DEVELOPMENT_PLAN.md)
 4. [协作约束](AGENTS.md)
 
+阶段材料：[阶段 1 测试](docs/STAGE1_TESTING.md) · [数据库基线](docs/DATABASE_SCHEMA.md) · [阶段 2 验证](docs/STAGE2_TESTING.md)
+
 ## 开发阶段门禁
 
-阶段 0 与阶段 1 已完成审阅。当前进入阶段 2，并按 [开发流程](docs/DEVELOPMENT_PLAN.md) 的用户门禁推进：每个细分任务必须先收到明确的“进行 Sx.y”指令，完成后等待用户验收，只有验收通过才进入下一项；当前不自动开始 S2.1，也不提前实现账号运行时适配器或业务路由。
+阶段 0 与阶段 1 已完成审阅。当前进入阶段 2，并按 [开发流程](docs/DEVELOPMENT_PLAN.md) 的用户门禁推进：每个细分任务完成后等待用户验收，只有验收通过才进入下一项；S2.1 当前处于 `awaiting_acceptance`，S2.2-S2.6 的后续授权已记录但仍按顺序验收，不提前实现账号运行时适配器或业务路由。
 
 参考产品只用于梳理工作流：`ai-relay-manager` 的站点、模型、健康、实验、备份和统计页面；New API 的渠道、计量和自动禁用概念；Sub2API 的账号池、导入与调度概念；[Cockpit Tools](https://github.com/jlcodes99/cockpit-tools) 的本地账号池、分平台添加账号、批量预检和后台任务交互。项目采用独立实现，不复制这些项目的源码。
 

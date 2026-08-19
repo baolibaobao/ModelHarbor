@@ -26,7 +26,7 @@ class GatewayController final : public QObject {
     Q_ENUM(State)
 
     explicit GatewayController(QString socketName = {}, QString gatewayProgram = {},
-                               QObject* parent = nullptr);
+                               QString dataDirectory = {}, QObject* parent = nullptr);
     ~GatewayController() override;
 
     void start();
@@ -52,6 +52,7 @@ class GatewayController final : public QObject {
 
     QString socketName_;
     QString gatewayProgram_;
+    QString dataDirectory_;
     QProcess gatewayProcess_;
     QLocalSocket* socket_ = nullptr;
     QTimer reconnectTimer_;

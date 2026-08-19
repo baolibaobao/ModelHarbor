@@ -2,7 +2,9 @@
 
 #include <QCoreApplication>
 #include <QEventLoop>
+#include <QTemporaryDir>
 #include <QTimer>
+#include <QUuid>
 
 #include <iostream>
 
@@ -33,9 +35,15 @@ bool waitForState(Controller& controller, Controller::State expected, int timeou
 
 int main(int argc, char** argv) {
     QCoreApplication application(argc, argv);
-    const QString socketName =
-        QStringLiteral("modelharbor-controller-test-%1").arg(application.applicationPid());
-    Controller controller(socketName, QStringLiteral(MODELHARBOR_GATEWAY_EXECUTABLE));
+    const QString socketName = QStringLiteral("modelharbor-controller-test-%1")
+                                   .arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
+    QTemporaryDir dataDirectory;
+    if (!dataDirectory.isValid()) {
+        std::cerr << "temporary gateway data directory failed\n";
+        return 1;
+    }
+    Controller controller(socketName, QStringLiteral(MODELHARBOR_GATEWAY_EXECUTABLE),
+                          dataDirectory.path());
     controller.start();
     if (!waitForState(controller, Controller::State::Ready, 5000) ||
         controller.gatewayVersion().isEmpty()) {
